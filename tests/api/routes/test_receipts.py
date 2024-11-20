@@ -115,8 +115,8 @@ def test_state_keeps_points(
         ),
     ],
     ids=[
-        "Target",
         "M&M Corner Market",
+        "Target with multiple items",
         "Morning receipt",
         "Simple receipt",
     ],

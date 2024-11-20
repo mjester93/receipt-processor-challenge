@@ -45,3 +45,15 @@ curl -X 'GET' \
   'http://127.0.0.1:8000/receipts/{id}/points' \
   -H 'accept: application/json'
 ```
+
+## Testing
+
+In order to run the tests, [uv](https://docs.astral.sh/uv/) must be installed first.
+
+This project uses [pytest](https://docs.pytest.org/en/stable/) as the testing framework. It also has the [pytest-cov](https://github.com/pytest-dev/pytest-cov) plugin to show coverage and missing lines.
+
+The pytest command to run tests is below:
+
+- `uv run pytest -vvv --cov=api`
+
+This will run pytest in verbose mode as well as show the coverage report.
