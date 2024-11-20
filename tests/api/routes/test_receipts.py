@@ -1,6 +1,6 @@
 # Standard Imports
 from typing import Any
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
 
 # Third-Party Imports
 import pytest

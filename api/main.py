@@ -1,7 +1,7 @@
 # Standard Imports
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from typing import Any, TypedDict
+from typing import TypedDict
 
 # Third-Party Imports
 from fastapi import FastAPI, Request, status
