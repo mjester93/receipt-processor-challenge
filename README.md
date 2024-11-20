@@ -16,7 +16,7 @@ And the command to run it:
 
 Once the Docker container is running there are multiple ways to use the API.
 
-1. Navigate to `http://127.0.0.1:8000/docs` or ` to view the Swagger documentation.
+1. Navigate to `http://127.0.0.1:8000/docs` or `http://127.0.0.1:8000/redoc` to view the Swagger documentation.
    This is interactive API documentation with examples and allows a user to type in their request.
 
 2. CLI via curl:
