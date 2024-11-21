@@ -1,6 +1,5 @@
 # Standard Imports
 from typing import Any
-from unittest.mock import Mock, patch
 
 # Third-Party Imports
 import pytest
@@ -16,6 +15,19 @@ def test_get_receipt_id_points_missing_id(client: TestClient) -> None:
     assert response.json()["detail"] == "No receipt found for that id"
 
 
+def test_get_receipt_id_points_missing_points(pending_client: TestClient) -> None:
+    """Assert the GET receipts/{id}/points returns a 202."""
+    with pending_client:
+        response = pending_client.get(
+            "/receipts/adb6b560-0eef-42bc-9d16-df48f30e89b2/points",
+        )
+    assert response.status_code == status.HTTP_202_ACCEPTED
+    assert (
+        response.json()["detail"]
+        == "Points calculation is still processing, try again later"
+    )
+
+
 def test_post_receipts_process_validation_error(client: TestClient) -> None:
     """Assert the POST receipts/process returns a 400 on invalid requests."""
     with client:
@@ -25,32 +37,6 @@ def test_post_receipts_process_validation_error(client: TestClient) -> None:
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert response.json()["detail"] is not None
-
-
-@patch("api.routes.receipts.get_points_for_receipt")
-def test_state_keeps_points(
-    mock_get_points: Mock,
-    client: TestClient,
-) -> None:
-    """Assert the function to calculate points only happens once per ID."""
-    receipt = {
-        "retailer": "M&M Corner Market",
-        "purchaseDate": "2022-03-20",
-        "purchaseTime": "14:33",
-        "items": [
-            {"shortDescription": "Gatorade", "price": "2.25"},
-            {"shortDescription": "Gatorade", "price": "2.25"},
-            {"shortDescription": "Gatorade", "price": "2.25"},
-            {"shortDescription": "Gatorade", "price": "2.25"},
-        ],
-        "total": "9.00",
-    }
-    with client:
-        post_response = client.post("/receipts/process", json=receipt)
-        receipt_id = post_response.json()["id"]
-        client.get(f"/receipts/{receipt_id}/points")
-        client.get(f"/receipts/{receipt_id}/points")
-        mock_get_points.assert_called_once()
 
 
 @pytest.mark.parametrize(

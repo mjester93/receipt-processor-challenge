@@ -31,6 +31,10 @@ async def process_receipt(
     receipt_id = str(uuid4())
     logger.info(f"Adding {receipt_id} to the lifecycle state")
     request.state.receipts[receipt_id] = receipt
+
+    points = get_points_for_receipt(receipt)
+    request.state.points[receipt_id] = points
+
     return ReceiptID(id=receipt_id)
 
 
@@ -85,6 +89,9 @@ def get_points_for_receipt(receipt: Receipt) -> int:
     description="Returns the points awarded for the receipt",
     responses={
         status.HTTP_200_OK: {"description": "The number of points awarded"},
+        status.HTTP_202_ACCEPTED: {
+            "description": "Points calculation is still processing",
+        },
         status.HTTP_404_NOT_FOUND: {"description": "No receipt found for that id"},
     },
 )
@@ -105,8 +112,9 @@ async def get_points_by_receipt_id(
 
     points: int | None = request.state.points.get(id)
     if not points:
-        logger.info(f"Points already calculated for {id}")
-        points = get_points_for_receipt(receipt)
-        request.state.points[id] = points
+        raise HTTPException(
+            status_code=status.HTTP_202_ACCEPTED,
+            detail="Points calculation is still processing, try again later",
+        )
 
     return ReceiptPoints(points=points)
